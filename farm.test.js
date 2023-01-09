@@ -96,6 +96,88 @@ describe("getYieldForCrop", () => {
     };
     expect(getYieldForCrop(input)).toBe(30);
   });
+
+  test("Get yield for crop with environment factors", () => {
+    const corn = {
+      name: "corn",
+      yield: 3,
+      factor: {
+        sun: {
+          low: -50,
+          medium: 0,
+          high: 50,
+        },
+      },
+    };
+    const environmentFactors = {
+      sun: "low",
+    };
+    const input = {
+      crop: corn,
+      numCrops: 20,
+    };
+
+    expect(getYieldForCrop(input, environmentFactors)).toBe(30);
+  });
+
+  test("Get yield for crop, multiple environments", () => {
+    const corn = {
+      name: "corn",
+      yield: 3,
+      factor: {
+        sun: {
+          low: -50,
+          medium: 0,
+          high: 50,
+        },
+        rain: {
+          low: -60,
+          medium: 0,
+          high: -20,
+        },
+      },
+    };
+    const environmentFactors = {
+      sun: "low",
+      rain: "high",
+    };
+    const input = {
+      crop: corn,
+      numCrops: 10,
+    };
+
+    expect(getYieldForCrop(input, environmentFactors)).toBe(12);
+  });
+
+  test("Get yield for crop, multiple environments including irrelavent", () => {
+    const corn = {
+      name: "corn",
+      yield: 3,
+      factor: {
+        sun: {
+          low: -50,
+          medium: 0,
+          high: 50,
+        },
+        rain: {
+          low: -60,
+          medium: 0,
+          high: -20,
+        },
+      },
+    };
+    const environmentFactors = {
+      sun: "low",
+      rain: "high",
+      wind: "high",
+    };
+    const input = {
+      crop: corn,
+      numCrops: 10,
+    };
+
+    expect(getYieldForCrop(input, environmentFactors)).toBe(12);
+  });
 });
 
 describe("getTotalYield", () => {
@@ -132,8 +214,8 @@ describe("Calculate cost for crop", () => {
       yield: 3,
       cost: 1,
     };
-
-    expect(getCostsForCrop(corn)).toBe(1);
+    const input = { crop: corn, numCrops: 10 };
+    expect(getCostsForCrop(input)).toBe(10);
   });
 });
 
