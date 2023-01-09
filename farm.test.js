@@ -8,13 +8,79 @@ const {
 } = require("./farm");
 
 describe("getYieldForPlant", () => {
-  const corn = {
-    name: "corn",
-    yield: 30,
-  };
-
   test("Get yield for plant with no environment factors", () => {
+    const corn = {
+      name: "corn",
+      yield: 30,
+    };
+
     expect(getYieldForPlant(corn)).toBe(30);
+  });
+
+  test("Get yield for plant with environment factors", () => {
+    const corn = {
+      name: "corn",
+      yield: 30,
+      factor: {
+        sun: {
+          low: -50,
+          medium: 0,
+          high: 50,
+        },
+      },
+    };
+
+    const environmentFactors = {
+      sun: "low",
+    };
+
+    expect(getYieldForPlant(corn, environmentFactors)).toBe(15);
+  });
+
+  test("Get yield for plant with irrelavent environment factors", () => {
+    const corn = {
+      name: "corn",
+      yield: 30,
+      factor: {
+        sun: {
+          low: -50,
+          medium: 0,
+          high: 50,
+        },
+      },
+    };
+
+    const environmentFactors = {
+      wind: "high",
+    };
+
+    expect(getYieldForPlant(corn, environmentFactors)).toBe(30);
+  });
+
+  test("Get yield for plant with multiple environment factors", () => {
+    const corn = {
+      name: "corn",
+      yield: 30,
+      factor: {
+        sun: {
+          low: -50,
+          medium: 0,
+          high: 50,
+        },
+        rain: {
+          low: -60,
+          medium: 0,
+          high: -20,
+        },
+      },
+    };
+
+    const environmentFactors = {
+      sun: "high",
+      rain: "high",
+    };
+
+    expect(getYieldForPlant(corn, environmentFactors)).toBe(36);
   });
 });
 

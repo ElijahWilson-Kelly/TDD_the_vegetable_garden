@@ -1,5 +1,21 @@
+// Helper Functions
+
+const percentageChangeToDecimal = (percentage) => 1 + percentage / 100;
+
 // Return yield for plant
-const getYieldForPlant = (plant) => plant.yield;
+const getYieldForPlant = (plant, environmentFactors = {}) => {
+  let plantYield = plant.yield;
+
+  for (const givenFactor in environmentFactors) {
+    if (plant.factor[givenFactor] === undefined) continue;
+
+    const factorAmount = environmentFactors[givenFactor];
+    const percentageChangeForFactorAmount =
+      plant.factor[givenFactor][factorAmount];
+    plantYield *= percentageChangeToDecimal(percentageChangeForFactorAmount);
+  }
+  return plantYield;
+};
 
 // Return total yield for crop
 const getYieldForCrop = ({ crop, numCrops }) => {
