@@ -1,9 +1,13 @@
-// Helper Functions
+// Return yield for plant
 const getYieldForPlant = (plant) => plant.yield;
 
-const getYieldForCrop = ({ crop, numCrops }) => crop.yield * numCrops;
+// Return total yield for crop
+const getYieldForCrop = ({ crop, numCrops }) => {
+  return getYieldForPlant(crop) * numCrops;
+};
 
-const getTotalYield = function ({ crops }) {
+// Return total yield for multiple crops
+const getTotalYield = ({ crops }) => {
   let result = 0;
   crops.forEach((crop) => {
     result += getYieldForCrop(crop);
@@ -11,9 +15,12 @@ const getTotalYield = function ({ crops }) {
   return result;
 };
 
+const getCostsForCrop = (plant) => plant.cost;
+
 // Exporting functions
 module.exports = {
   getYieldForPlant,
   getYieldForCrop,
   getTotalYield,
+  getCostsForCrop,
 };
