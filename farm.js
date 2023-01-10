@@ -46,11 +46,9 @@ const getYieldForCrop = ({ crop, numCrops }, environmentFactors) => {
  * @returns {number} - yield from multiple crops
  */
 const getTotalYield = ({ crops }, environmentFactors) => {
-  let result = 0;
-  crops.forEach((crop) => {
-    result += getYieldForCrop(crop, environmentFactors);
-  });
-  return result;
+  return crops.reduce((result, currentCrop) => {
+    return result + getYieldForCrop(currentCrop, environmentFactors);
+  }, 0);
 };
 
 /*
