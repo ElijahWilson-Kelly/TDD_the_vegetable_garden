@@ -247,7 +247,6 @@ describe("getTotalYield", () => {
         },
       },
     };
-
     const pumpkin = {
       name: "pumpkin",
       yield: 4,
@@ -271,9 +270,10 @@ describe("getTotalYield", () => {
 
     const environmentFactors = {
       sun: "low",
+      rain: "high",
     };
 
-    expect(getTotalYield({ crops }, environmentFactors)).toBe(66);
+    expect(getTotalYield({ crops }, environmentFactors)).toBe(78);
   });
 });
 
@@ -285,8 +285,16 @@ describe("getCostsForCrop", () => {
       yield: 3,
       cost: 1,
     };
-    const input = { crop: corn, numCrops: 10 };
-    expect(getCostsForCrop(input)).toBe(10);
+    const pumpkin = {
+      name: "pumpkin",
+      yield: 4,
+      cost: 3,
+    };
+    const inputOne = { crop: corn, numCrops: 10 };
+    const inputTwo = { crop: pumpkin, numCrops: 10 };
+
+    expect(getCostsForCrop(inputOne)).toBe(10);
+    expect(getCostsForCrop(inputTwo)).toBe(30);
   });
 });
 
@@ -326,15 +334,13 @@ describe("getRevenueForCrop", () => {
       },
       salePrice: 2,
     };
-
-    const environmentFactors = {
-      rain: "low",
-      sun: "low",
-    };
-
     const input = {
       crop: corn,
       numCrops: 20,
+    };
+    const environmentFactors = {
+      rain: "low",
+      sun: "low",
     };
 
     expect(getRevenueForCrop(input, environmentFactors)).toBe(24);
@@ -343,20 +349,50 @@ describe("getRevenueForCrop", () => {
 
 // Tests for getProfitForCrop
 describe("getProfitForCrop", () => {
-  test("Calculate profit for a given crop", () => {
+  test("Calculate profit for crop no environment factors", () => {
     const corn = {
       name: "corn",
       yield: 3,
       cost: 1,
       salePrice: 2,
     };
-
     const input = {
       crop: corn,
       numCrops: 10,
     };
 
     expect(getProfitForCrop(input)).toBe(50);
+  });
+
+  test("Calculate profit for crop with environment factors", () => {
+    const corn = {
+      name: "corn",
+      yield: 3,
+      cost: 1,
+      salePrice: 2,
+      factor: {
+        sun: {
+          low: -50,
+          medium: 0,
+          high: 50,
+        },
+        rain: {
+          low: -60,
+          medium: 0,
+          high: -20,
+        },
+      },
+    };
+    const input = {
+      crop: corn,
+      numCrops: 10,
+    };
+    const environmentFactors = {
+      sun: "low",
+      rain: "high",
+    };
+
+    expect(getProfitForCrop(input, environmentFactors)).toBe(14);
   });
 });
 
