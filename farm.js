@@ -1,6 +1,6 @@
 // Helper Functions
 
-// Change percentage change to decimal number to multiply
+// Return number that when multiplied by a value changes that value by given percent
 const percentageChangeToDecimal = (percentage) => 1 + percentage / 100;
 
 // Round number to specified number of decimal points
@@ -9,7 +9,7 @@ const roundValueToXDecimalPoints = (value, numberOfDecimalPoints) => {
   return Math.round(value * multiplier) / multiplier;
 };
 
-// Return yield for plant
+// Return yield for plant depending on environment
 const getYieldForPlant = (plant, environmentFactors = {}) => {
   let plantYield = plant.yield;
 
@@ -17,10 +17,8 @@ const getYieldForPlant = (plant, environmentFactors = {}) => {
     if (plant.factor[environment] === undefined) continue;
 
     const factorAmount = environmentFactors[environment];
-    const percentageChangeForFactorAmount =
-      plant.factor[environment][factorAmount];
-    plantYield *= percentageChangeToDecimal(percentageChangeForFactorAmount);
-
+    const percentageChange = plant.factor[environment][factorAmount];
+    plantYield *= percentageChangeToDecimal(percentageChange);
     plantYield = roundValueToXDecimalPoints(plantYield, 2);
   }
   return plantYield;
@@ -32,27 +30,36 @@ const getYieldForCrop = ({ crop, numCrops }, environmentFactors) => {
 };
 
 // Return total yield for multiple crops
-const getTotalYield = ({ crops }) => {
+const getTotalYield = ({ crops }, environmentFactors) => {
   let result = 0;
   crops.forEach((crop) => {
-    result += getYieldForCrop(crop);
+    result += getYieldForCrop(crop, environmentFactors);
   });
   return result;
 };
 
-// Returns cost of planting given plant
+// Return cost for planting crop
 const getCostsForCrop = ({ crop, numCrops }) => crop.cost * numCrops;
 
-// Returns revenue for a given crop
-const getRevenueForCrop = ({ crop, numCrops }) => {
-  return getYieldForCrop({ crop, numCrops }) * crop.salePrice;
+// Return revenue from crop
+const getRevenueForCrop = ({ crop, numCrops }, environmentFactors) => {
+  return (
+    getYieldForCrop({ crop, numCrops }, environmentFactors) * crop.salePrice
+  );
 };
 
-// Returns Profit for a given crop
-const getProfitForCrop = ({ crop, numCrops }) => {
-  const revenue = getRevenueForCrop({ crop, numCrops });
-  const costs = getCostsForCrop({ crop, numCrops });
+// Returns profit for crop
+const getProfitForCrop = (crop, environmentFactors) => {
+  const revenue = getRevenueForCrop(crop, environmentFactors);
+  const costs = getCostsForCrop(crop);
   return revenue - costs;
+};
+
+// Returns total profit from multipleCrops
+const getTotalProfit = ({ crops }, environmentFactors) => {
+  return crops.reduce((result, currentCrop) => {
+    return result + getProfitForCrop(currentCrop, environmentFactors);
+  }, 0);
 };
 
 // Exporting functions
@@ -63,4 +70,5 @@ module.exports = {
   getCostsForCrop,
   getRevenueForCrop,
   getProfitForCrop,
+  getTotalProfit,
 };
